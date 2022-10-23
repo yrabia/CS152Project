@@ -7,18 +7,13 @@ public class Testing {
 	public static void main(String[] args) {
 		
 		Environment env = new Environment();
-	    List<String> params = new ArrayList<String>();
-	    params.add("x");
-	    params.add("y");
-	    FunctionDeclExpr f = new FunctionDeclExpr(params,
-	            new BinOpExpr(Op.DIVIDE,
-	                    new VarExpr("x"),
-	                    new VarExpr("y")));
-	    List<Expression> argm = new ArrayList<Expression>();
-	    argm.add(new ValueExpr(new IntVal(8)));
-	    argm.add(new ValueExpr(new IntVal(2)));
-	    FunctionAppExpr app = new FunctionAppExpr(f,argm);
-	    Value result = app.evaluate(env);
-	    System.out.print(result);
+        VarDeclExpr newVar = new VarDeclExpr("x", new ValueExpr(new IntVal(112358)));
+        FunctionDeclExpr f = new FunctionDeclExpr(new ArrayList<String>(),
+                new SeqExpr(new AssignExpr("x", new ValueExpr(new IntVal(42))),
+                        new VarExpr("x")));
+        SeqExpr seq = new SeqExpr(new SeqExpr(newVar,
+                new FunctionAppExpr(f, new ArrayList<Expression>())),
+                new VarExpr("x"));
+        Value v = seq.evaluate(env);
 }
 }

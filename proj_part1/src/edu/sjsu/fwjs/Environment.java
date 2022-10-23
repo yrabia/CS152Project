@@ -28,17 +28,23 @@ public class Environment {
      */
     public Value resolveVar(String varName) {
         // YOUR CODE HERE
-    	if (this.env.containsKey(varName)) {
-			return this.env.get(varName);
-		}
-    	Environment current = this;
-    	while (this.outerEnv != null) {
-    		if (this.env.containsKey(varName)) {
-    			return this.env.get(varName);
-    		}
-    		current = current.outerEnv;
+    	Value var = null;
+    	Environment currentEnv = this;
+    	
+    	// check if var is in any scope until it is found
+    	while((var = currentEnv.env.get(varName)) == null &&
+    			currentEnv.outerEnv != null) {
+    		// var not found and hasn't reached global scope
+    		// reach outer environment scope
+    		currentEnv = currentEnv.outerEnv;
     	}
-    	return null;
+    	
+    	// if var not found it returns NullVal 
+    	if(var == null) {
+    		return new NullVal();
+    	}
+    	
+        return var;
     	
     }
 
@@ -70,8 +76,9 @@ public class Environment {
     public void createVar(String key, Value v) {
         // YOUR CODE HERE
     	if (this.env.containsKey(key)) {
-    		throw new RuntimeException();
+    		throw new RuntimeException(); //che6ck outer scope
     	}
+
     	else {
     		this.env.put(key, v);
     	}

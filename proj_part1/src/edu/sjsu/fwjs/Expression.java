@@ -125,8 +125,14 @@ class IfExpr implements Expression {
     }
     public Value evaluate(Environment env) {
         // YOUR CODE HERE
-        return null;
-    }
+        if(((BoolVal)cond.evaluate(env)).toBoolean()) {
+        	return thn.evaluate(env);
+        } else if(els != null) {
+        	return els.evaluate(env);
+        }
+        
+		return new NullVal();
+}
 }
 
 /**
@@ -145,8 +151,9 @@ class WhileExpr implements Expression {
     	BoolVal cond1 = (BoolVal)cond.evaluate(env);
     	while (cond1.toBoolean() == true) {
     		body.evaluate(env);
+            cond1 = (BoolVal) cond.evaluate(env);
     	}
-        return null;
+        return new IntVal(0);
     }
 }
 
@@ -162,7 +169,9 @@ class SeqExpr implements Expression {
     }
     public Value evaluate(Environment env) {
         // YOUR CODE HERE
-        return null;
+        //evaluate e1 and return evaluated e2
+        e1.evaluate(env);
+        return e2.evaluate(env);
     }
 }
 
@@ -199,7 +208,10 @@ class AssignExpr implements Expression {
     }
     public Value evaluate(Environment env) {
         // YOUR CODE HERE
-        return null;
+         //update var in environment
+         env.updateVar(varName, e.evaluate(env));
+         // Returns the updated var from environment
+         return env.resolveVar(varName);
     }
 }
 
@@ -232,7 +244,14 @@ class FunctionAppExpr implements Expression {
     }
     public Value evaluate(Environment env) {
         // YOUR CODE HERE
-        return null;
+        ClosureVal val = (ClosureVal) f.evaluate(env);	// Evaluate f to get ClosureVal
+    	List<Value> evalArgs = new ArrayList<Value>();	// List of evaluated values.
+    	
+    	for(int i = 0; i < args.size(); i++) {
+    		evalArgs.add(args.get(i).evaluate(env));
+    	}
+
+    	return val.apply(evalArgs);
     }
 }
 
