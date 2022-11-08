@@ -147,7 +147,6 @@ class WhileExpr implements Expression {
     }
     public Value evaluate(Environment env) {
         // YOUR CODE HERE
-    	//seems to be stuck either bc dont have Assign done, or infinate loop
     	BoolVal cond1 = (BoolVal)cond.evaluate(env);
     	while (cond1.toBoolean() == true) {
     		body.evaluate(env);
