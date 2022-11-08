@@ -1,6 +1,9 @@
 package edu.sjsu.fwjs;
 
 import java.util.Map;
+
+import javax.management.RuntimeErrorException;
+
 import java.util.HashMap;
 
 public class Environment {
@@ -55,17 +58,22 @@ public class Environment {
      */
     public void updateVar(String key, Value v) {
         // YOUR CODE HERE
-    	// if no existing variable found, loop to get to global scope then store variable
-    	if (this.resolveVar(key)==null) {
-    		Environment global = this;
-    		while (global.outerEnv != null) {
-    			global = global.outerEnv;
-    		}
-    		global.env.put(key, v);
-    	}
-    	else {
-    		this.env.put(key,v);
-    	}
+    	Environment scope = this;
+        Value oldv = null;
+        //search all scopes for variable
+    	while ((scope.outerEnv != null) && (oldv == null)) {
+            scope = scope.outerEnv;
+            oldv=scope.env.get(key);
+        }
+        //if not found, create new variable at outermost scope
+        if (oldv == null){
+            scope.env.put(key, v);
+        }
+        //if found, replace w new value
+        else {
+            scope.env.replace(key, oldv, v);
+        }
+
     }
 
     /**
@@ -76,9 +84,8 @@ public class Environment {
     public void createVar(String key, Value v) {
         // YOUR CODE HERE
     	if (this.env.containsKey(key)) {
-    		throw new RuntimeException(); //che6ck outer scope
+    		throw new RuntimeException(); 
     	}
-
     	else {
     		this.env.put(key, v);
     	}
